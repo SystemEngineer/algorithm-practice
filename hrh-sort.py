@@ -47,6 +47,7 @@ class SortToolBox():
 		tmpIndex = fromIndex
 		#devided the list by a list element, return the index where split the list
 		#each time we got a list whose left part is less than split element and right part is on the contrary
+		#Fix me: can be change to list comprehension
 		for i in range(fromIndex,toIndex):
 			if (unsortedList[i] < unsortedList[toIndex]) :
 				tmp = unsortedList[tmpIndex]
@@ -76,10 +77,42 @@ class SortToolBox():
 		self.__QuickSortRecursion(sortedlist, 0, len(sortedlist) -1)
 		return ''.join(sortedlist), self.count
 
+	def __MergeSortMerging(self, listLeft, listRight):
+		mergeList = []
+		#print "Merging %s & %s" % (''.join(listLeft),''.join(listRight))
+		while listLeft and listRight:
+			self.count += 1
+			mergeList.append(listLeft.pop(0) if listLeft[0] <= listRight[0] else listRight.pop(0))
+		while listLeft:
+			self.count += 1
+			mergeList.append(listLeft.pop(0))
+		while listRight:
+			self.count += 1
+			mergeList.append(listRight.pop(0))
+		#print "Merging result %s" %  ''.join(mergeList)
+		return mergeList
+
+	def __MergeSortRecursion(self,listForSorting):
+		#if there only one element, return it
+		if len(listForSorting) < 2:
+			return listForSorting
+		listLen = int(len(listForSorting)/2)
+		listLeft = self.__MergeSortRecursion(listForSorting[:listLen])
+		listRight = self.__MergeSortRecursion(listForSorting[(listLen):])
+		return self.__MergeSortMerging(listLeft,listRight)
+
+	def MergeSort(self,unsortedStr):
+		if len(unsortedStr) < 2:
+			return unsortedStr, 0
+		tmpList = list(unsortedStr)
+		self.count = 0
+		return ''.join(self.__MergeSortRecursion(tmpList)), self.count
 
 if __name__ == '__main__':
 	tool = SortToolBox()
-	strToSort = "14567dag93"
+	strToSort = "14567dag93jkQRAFA367589829113bnm"
 	print "insert sort: %s, %d" % tool.InsertSort(strToSort)
 	print "bubble sort: %s, %d" % tool.BubbleSort(strToSort)
 	print "quick sort: %s, %d" % tool.QuickSort(strToSort)
+	print "merge sort: %s, %d" % tool.MergeSort(strToSort)
+
